@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to Webuddy!</title>
+    <link rel="icon" type="image/x-icon" href="data:image/x-icon;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABmJLR0QAAAAAAAD5Q7t/AAAAVUlEQVQ4y2NgoBlo+f+fdoaT7AJsroGKMVFqz2AxgIIQZ0EPFJyAVtHKiGF6DSMjVtuwidcwMuJ3Hro4FnVMKJLE+BOvOkI2YtHIgtcLhCyBhwEFAACctTk4ccr+QgAAAABJRU5ErkJggg==">
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f8f9fa;
+            color: #212529;
+        }
+        .auth-container {
+            max-width: 400px;
+            width: 100%;
+            padding: 2rem;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        header h1 {
+            margin-bottom: 0.5rem;
+        }
+        header p {
+            color: #6c757d;
+        }
+        .form-container {
+            display: block;
+        }
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            padding: 0.75rem;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            width: 100%;
+            transition: background-color 0.2s;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .toggle-form {
+            text-align: center;
+            margin-top: 1.5rem;
+        }
+        .toggle-form button {
+            background: none;
+            border: none;
+            color: #007bff;
+            cursor: pointer;
+            text-decoration: underline;
+            padding: 0;
+        }
+        #login-form {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="auth-container">
+        <header>
+            <h1>Webuddy</h1>
+            <p>Create your interactive site guardian</p>
+        </header>
+
+        <!-- Sign Up Form -->
+        <div id="signup-form" class="form-container">
+            <h2>Sign Up</h2>
+            <form>
+                <div class="form-group">
+                    <label for="signup-email">Email</label>
+                    <input type="email" id="signup-email" required>
+                </div>
+                <div class="form-group">
+                    <label for="signup-password">Password</label>
+                    <input type="password" id="signup-password" required minlength="6">
+                </div>
+                <button type="submit">Sign Up</button>
+            </form>
+            <div class="toggle-form">
+                <p>Already have an account? <button id="show-login">Log In</button></p>
+            </div>
+        </div>
+
+        <!-- Login Form -->
+        <div id="login-form" class="form-container">
+            <h2>Log In</h2>
+            <form>
+                <div class="form-group">
+                    <label for="login-email">Email</label>
+                    <input type="email" id="login-email" required>
+                </div>
+                <div class="form-group">
+                    <label for="login-password">Password</label>
+                    <input type="password" id="login-password" required>
+                </div>
+                <button type="submit">Log In</button>
+            </form>
+            <div class="toggle-form">
+                <p>Don't have an account? <button id="show-signup">Sign Up</button></p>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { signUp, logIn } from './auth.js';
+
+        const signupForm = document.querySelector('#signup-form form');
+        const loginForm = document.querySelector('#login-form form');
+        
+        const showLoginBtn = document.getElementById('show-login');
+        const showSignupBtn = document.getElementById('show-signup');
+
+        const signupContainer = document.getElementById('signup-form');
+        const loginContainer = document.getElementById('login-form');
+
+        // Toggle between forms
+        showLoginBtn.addEventListener('click', () => {
+            signupContainer.style.display = 'none';
+            loginContainer.style.display = 'block';
+        });
+
+        showSignupBtn.addEventListener('click', () => {
+            loginContainer.style.display = 'none';
+            signupContainer.style.display = 'block';
+        });
+
+        // Event Listeners
+        signupForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('signup-email').value;
+            const password = document.getElementById('signup-password').value;
+            const { data, error } = await signUp(email, password);
+            if (!error && data.user) {
+                alert('Success! Please check your email to confirm your sign up.');
+                signupForm.reset();
+            }
+        });
+
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+            await logIn(email, password);
+        });
+
+        // Show login form by default if redirected
+        if (window.location.search.includes('redirect')) {
+             signupContainer.style.display = 'none';
+             loginContainer.style.display = 'block';
+        } else {
+             loginContainer.style.display = 'none';
+             signupContainer.style.display = 'block';
+        }
+    </script>
+
+</body>
+</html> 

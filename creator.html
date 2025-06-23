@@ -1,0 +1,1512 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Webuddy Creator</title>
+    <link rel="icon" type="image/x-icon" href="data:image/x-icon;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABmJLR0QAAAAAAAD5Q7t/AAAAVUlEQVQ4y2NgoBlo+f+fdoaT7AJsroGKMVFqz2AxgIIQZ0EPFJyAVtHKiGF6DSMjVtuwidcwMuJ3Hro4FnVMKJLE+BOvOkI2YtHIgtcLhCyBhwEFAACctTk4ccr+QgAAAABJRU5ErkJggg==">
+    <style>
+        :root {
+            --primary-color: #4f46e5;
+            --primary-hover: #4338ca;
+            --secondary-color: #10b981;
+            --secondary-hover: #059669;
+            --danger-color: #ef4444;
+            --danger-hover: #dc2626;
+            --bg-color: #f8fafc;
+            --card-bg: #ffffff;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --border-color: #e2e8f0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 2rem;
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+        }
+        
+        .creator-container {
+            max-width: 1200px;
+            margin: auto;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        header h1 {
+            font-size: 2.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+        header a {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 500;
+        }
+        header a:hover {
+            text-decoration: underline;
+        }
+
+        /* Card-based layout */
+        .card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            margin-bottom: 2rem;
+        }
+
+        .card-header {
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .card-header h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin: 0;
+        }
+        .card-header p {
+            margin: 0.25rem 0 0;
+            color: var(--text-secondary);
+        }
+
+        .config-columns {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            align-items: start;
+        }
+
+        /* Form elements */
+        .form-group { margin-bottom: 1.5rem; }
+        .form-group label { 
+            display: block; 
+            margin-bottom: 0.5rem; 
+            font-weight: 500; 
+            color: #334155;
+        }
+        .form-group input[type="text"], 
+        .form-group input[type="url"], 
+        .form-group select, 
+        .form-group textarea, 
+        .form-group input[type="number"] { 
+            width: 100%; 
+            padding: 0.75rem; 
+            border: 1px solid var(--border-color); 
+            border-radius: 8px; 
+            box-sizing: border-box;
+            background-color: #f8fafc;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2);
+        }
+        textarea {
+            resize: vertical;
+        }
+        .input-with-button {
+            display: flex;
+            gap: 0.5rem;
+        }
+        .input-with-button input {
+            flex-grow: 1;
+        }
+        
+        /* Buttons */
+        .btn {
+            padding: 0.75rem 1.25rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: background-color 0.2s, box-shadow 0.2s, transform 0.1s;
+        }
+        .btn:hover {
+            transform: translateY(-1px);
+        }
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+            box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+        }
+        .btn-primary:hover {
+            background-color: var(--primary-hover);
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        }
+        .btn-secondary {
+            background-color: #eef2ff;
+            color: var(--primary-color);
+        }
+        .btn-secondary:hover {
+            background-color: #e0e7ff;
+        }
+        .btn-danger-outline {
+            background: transparent;
+            border: 1px solid var(--danger-color);
+            color: var(--danger-color);
+            padding: 4px;
+            border-radius: 50%;
+            width: 28px;
+            height: 28px;
+            font-weight: bold;
+            line-height: 1;
+        }
+        .btn-danger-outline:hover {
+            background-color: var(--danger-color);
+            color: white;
+        }
+        #scan-pages-btn { flex-shrink: 0; }
+        #save-btn {
+            grid-column: 1 / -1; /* Span full width in grid */
+            display: block;
+            width: 100%;
+            max-width: 300px;
+            margin: 2rem auto 0;
+            text-align: center;
+        }
+
+        /* Character Creation Area */
+        .character-creation-area {
+            display: grid;
+            grid-template-columns: auto auto;
+            justify-content: start;
+            gap: 2rem;
+            align-items: start;
+            margin-top: 1.5rem;
+        }
+        .direction-upload-row {
+            display: grid;
+            grid-template-columns: 60px 90px 90px;
+            gap: 0.75rem;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        .direction-upload-row label {
+            font-weight: 500;
+            color: var(--text-secondary);
+            text-align: right;
+            padding-right: 1rem;
+        }
+        .preview-controls {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            position: sticky;
+            top: 2rem;
+        }
+
+        /* Upload Slot Styling */
+        .upload-slot {
+            background-color: var(--bg-color);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            border: 2px dashed var(--border-color);
+            cursor: pointer;
+            transition: border-color 0.2s, background-color 0.2s;
+            aspect-ratio: 1 / 1;
+        }
+        .upload-slot:hover {
+            border-color: var(--primary-color);
+            background-color: #eef2ff;
+        }
+        .upload-slot input[type="file"] {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            opacity: 0; cursor: pointer;
+        }
+        .upload-slot .slot-label { color: var(--text-secondary); font-size: 0.9rem; font-weight: 500; }
+        .upload-slot img.preview {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            object-fit: cover; z-index: 1;
+        }
+        .center-slot {
+            background-color: var(--primary-color);
+            color: white;
+            border: 2px solid var(--primary-color);
+            cursor: pointer;
+            z-index: 2;
+        }
+        .center-slot:hover { background-color: var(--primary-hover); }
+
+        /* Dialogue & Automations */
+        .dialogue-list { 
+            max-height: none; /* Let content determine height */
+            overflow-y: visible;
+            border: none;
+            padding: 0;
+            margin-top: 1rem;
+        }
+        .dialogue-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .dialogue-item:last-child {
+            border-bottom: none;
+        }
+        .dialogue-item:hover {
+            background-color: transparent;
+        }
+        .dialogue-item input[type="text"] {
+            flex-grow: 1;
+            background-color: transparent;
+            border: none;
+            padding: 0.5rem;
+            border-radius: 6px;
+        }
+        .dialogue-item input[type="text"]:focus {
+             background-color: var(--bg-color);
+             outline: none;
+             box-shadow: none;
+        }
+        .drag-handle {
+            cursor: grab;
+            color: var(--text-secondary);
+            padding: 0 0.5rem;
+        }
+        .drag-handle:active {
+            cursor: grabbing;
+        }
+        .item-number {
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+        .dialogue-controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        .dialogue-tabs {
+            display: flex;
+            flex-wrap: wrap;
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 1rem;
+        }
+        .dialogue-tab {
+            padding: 0.75rem 1.25rem;
+            cursor: pointer;
+            border: none;
+            border-bottom: 2px solid transparent;
+            background-color: transparent;
+            font-weight: 500;
+            color: var(--text-secondary);
+            margin-bottom: -1px;
+        }
+        .dialogue-tab.active {
+            color: var(--primary-color);
+            border-bottom-color: var(--primary-color);
+        }
+        .automation-item {
+            background-color: #f8fafc;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: auto auto;
+            gap: 1rem;
+            grid-template-areas: 
+                "trigger message"
+                "config  delete";
+        }
+        .automation-item .form-group { margin-bottom: 0; }
+        .automation-item-trigger { grid-area: trigger; }
+        .automation-item-config { grid-area: config; }
+        .automation-item-message { grid-area: message; }
+        .automation-item-delete { grid-area: delete; justify-self: end; align-self: end; }
+        .delete-automation-btn {
+            background-color: #fee2e2;
+            color: var(--danger-color);
+        }
+        .delete-automation-btn:hover {
+            background-color: var(--danger-color);
+            color: white;
+        }
+        .helper-link {
+            font-size: 0.8rem;
+            font-weight: normal;
+            color: var(--primary-color);
+            cursor: pointer;
+            margin-left: 0.5rem;
+        }
+        
+        /* Final 'Get Code' Section */
+         .code-section { margin-top: 2rem; }
+        pre { 
+            background: #1e293b;
+            color: #e2e8f0;
+            padding: 1.5rem; 
+            border-radius: 8px; 
+            white-space: pre-wrap; 
+            position: relative; 
+            font-family: 'SF Mono', 'Fira Code', 'Fira Mono', 'Roboto Mono', monospace;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+        .copy-btn { 
+            position: absolute; top: 1rem; right: 1rem; 
+            background: #334155; 
+            color: white; border: none; 
+            padding: 5px 10px; border-radius: 4px; cursor: pointer;
+        }
+        .copy-btn:hover {
+            background: #475569;
+        }
+
+        /* Stepper Navigation */
+        .stepper {
+            display: flex;
+            justify-content: space-around;
+            list-style: none;
+            padding: 0;
+            margin: 0 0 3rem 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .step {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 1rem 0.5rem;
+            cursor: pointer;
+            flex-grow: 1;
+            justify-content: center;
+            position: relative;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+        .step::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: transparent;
+            transition: background-color 0.3s;
+        }
+        .step-number {
+            width: 2rem;
+            height: 2rem;
+            border-radius: 50%;
+            border: 2px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.3s, border-color 0.3s, color 0.3s;
+        }
+        .step.active .step-number {
+            border-color: var(--primary-color);
+            background-color: var(--primary-color);
+            color: white;
+        }
+        .step.completed .step-number {
+            border-color: var(--secondary-color);
+            background-color: var(--secondary-color);
+            color: white;
+        }
+        .step.completed::after {
+            background-color: var(--secondary-color);
+        }
+        .step.active .step-label, .step.completed .step-label {
+             color: var(--text-primary);
+        }
+        .step.active::after {
+            background-color: var(--primary-color);
+        }
+
+        /* Step Content */
+        .creator-step {
+            display: none;
+        }
+        .creator-step.active {
+            display: block;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .step-navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+        }
+
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10001;
+        }
+        .modal-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            max-width: 800px;
+            width: 90%;
+            position: relative;
+        }
+        .modal-close-btn {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 1.8rem;
+            font-weight: bold;
+            border: none;
+            background: none;
+            cursor: pointer;
+            color: var(--text-secondary);
+        }
+        .template-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 1rem;
+            max-height: 60vh;
+            overflow-y: auto;
+            margin-top: 1rem;
+        }
+        .template-item {
+            background-size: contain;
+            background-position: center;
+            background-repeat: no-repeat;
+            cursor: pointer;
+            height: 100px;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            transition: border-color 0.2s, transform 0.2s;
+        }
+        .template-item:hover {
+            border-color: var(--primary-color);
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
+    <div class="creator-container">
+        <header>
+            <h1 id="creator-title">Create New Webuddy</h1>
+            <a href="/dashboard.html" class="btn btn-secondary">Back to Dashboard</a>
+        </header>
+        
+        <ul class="stepper">
+            <li class="step active" data-step="1">
+                <span class="step-number">1</span>
+                <span class="step-label">Appearance</span>
+            </li>
+            <li class="step" data-step="2">
+                <span class="step-number">2</span>
+                <span class="step-label">Behavior</span>
+            </li>
+            <li class="step" data-step="3">
+                <span class="step-number">3</span>
+                <span class="step-label">Dialogue</span>
+            </li>
+             <li class="step" data-step="4">
+                <span class="step-number">4</span>
+                <span class="step-label">Get Code</span>
+            </li>
+        </ul>
+
+        <form id="buddy-form">
+            <div id="step-1" class="creator-step active">
+                <div class="card">
+                    <div class="card-header">
+                        <h2>Step 1: Appearance</h2>
+                        <p>Give your buddy a name and choose how it looks.</p>
+                    </div>
+                    <div class="form-group">
+                        <label for="buddy-name">Buddy Name</label>
+                        <input type="text" id="buddy-name" placeholder="e.g., Sparky the Spaceman" required>
+                    </div>
+                </div>
+
+                <div class="card">
+                     <div class="card-header">
+                        <h2>Character Images</h2>
+                        <p>Upload images for each movement direction, or choose a template.</p>
+                    </div>
+                    <div class="character-creation-area">
+                        <div class="image-uploads">
+                           <div class="direction-upload-row">
+                                <label>Up</label>
+                                <div id="slot-up-1" class="upload-slot">
+                                    <input type="file" data-direction="up" accept="image/*"><span class="slot-label">Frame 1</span>
+                                </div>
+                                <div id="slot-up-2" class="upload-slot">
+                                    <input type="file" data-direction="up-2" accept="image/*"><span class="slot-label">Frame 2</span>
+                                </div>
+                            </div>
+                             <div class="direction-upload-row">
+                                <label>Left</label>
+                                <div id="slot-left-1" class="upload-slot">
+                                    <input type="file" data-direction="left" accept="image/*"><span class="slot-label">Frame 1</span>
+                                </div>
+                                <div id="slot-left-2" class="upload-slot">
+                                    <input type="file" data-direction="left-2" accept="image/*"><span class="slot-label">Frame 2</span>
+                                </div>
+                            </div>
+                            <div class="direction-upload-row">
+                                <label>Right</label>
+                                <div id="slot-right-1" class="upload-slot">
+                                    <input type="file" data-direction="right" accept="image/*"><span class="slot-label">Frame 1</span>
+                                </div>
+                                <div id="slot-right-2" class="upload-slot">
+                                    <input type="file" data-direction="right-2" accept="image/*"><span class="slot-label">Frame 2</span>
+                                </div>
+                            </div>
+                             <div class="direction-upload-row">
+                                <label>Down</label>
+                                <div id="slot-down-1" class="upload-slot">
+                                    <input type="file" data-direction="down" accept="image/*"><span class="slot-label">Frame 1</span>
+                                </div>
+                                <div id="slot-down-2" class="upload-slot">
+                                    <input type="file" data-direction="down-2" accept="image/*"><span class="slot-label">Frame 2</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="preview-controls">
+                            <div id="preview-btn-slot" class="upload-slot center-slot">
+                                <span class="slot-label">Preview</span>
+                            </div>
+                            <button type="button" id="show-templates-btn" class="btn btn-secondary">Choose From Templates</button>
+                        </div>
+                    </div>
+                </div>
+                 <div class="step-navigation">
+                    <span></span> <!-- to push the next button to the right -->
+                    <button type="button" class="btn btn-primary next-step-btn" data-step="2">Next: Behavior →</button>
+                </div>
+            </div>
+
+            <div id="step-2" class="creator-step">
+                <div class="card">
+                     <div class="card-header">
+                        <h2>Step 2: Personality & Behavior</h2>
+                        <p>Define how your buddy acts and talks, and how often it appears.</p>
+                    </div>
+
+                    <div class="config-columns">
+                        <div>
+                            <div class="form-group">
+                                <label for="personality-base">Base Persona</label>
+                                <select id="personality-base">
+                                    <option value="friendly" selected>Friendly & Welcoming</option>
+                                    <option value="humorous">Humorous & Witty</option>
+                                    <option value="insightful">Insightful & Informative</option>
+                                    <option value="professional">Professional & Formal</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="custom-instructions">Custom Instructions</label>
+                                <textarea id="custom-instructions" rows="4" placeholder="e.g., Act like a pirate. Refer to visitors as 'matey'."></textarea>
+                            </div>
+                        </div>
+
+                        <div>
+                            <div class="form-group">
+                                <label for="talk-frequency">Chat Frequency</label>
+                                <p style="font-size: 0.9rem; color: var(--text-secondary); margin-top: -0.5rem; margin-bottom: 0.5rem;">Time between random messages, in seconds.</p>
+                                <input type="number" id="talk-frequency" value="20" min="5">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="animation-speed">Animation Speed</label>
+                                <p style="font-size: 0.9rem; color: var(--text-secondary); margin-top: -0.5rem; margin-bottom: 0.5rem;">Time between animation frames, in milliseconds.</p>
+                                <input type="number" id="animation-speed" value="200" min="50">
+                            </div>
+                        </div>
+                     </div>
+                </div>
+                 <div class="step-navigation">
+                    <button type="button" class="btn btn-secondary prev-step-btn" data-step="1">← Previous: Appearance</button>
+                    <button type="button" class="btn btn-primary next-step-btn" data-step="3">Next: Dialogue →</button>
+                </div>
+            </div>
+
+            <div id="step-3" class="creator-step">
+                 <div class="card">
+                    <div class="card-header">
+                        <h2>Step 3: Dialogue & Automations</h2>
+                        <p>What does your buddy say? Configure welcome messages, automated reactions, and general chat.</p>
+                    </div>
+                    <div class="form-group" id="website-url-group">
+                        <label for="website-url">Your Website URL</label>
+                         <p style="font-size: 0.9rem; color: var(--text-secondary); margin-top: -0.5rem; margin-bottom: 0.5rem;">The AI uses your site content to generate relevant dialogue. Provide your URL and scan for pages.</p>
+                        <div class="input-with-button">
+                            <input type="url" id="website-url" placeholder="https://www.my-awesome-site.com">
+                            <button type="button" id="scan-pages-btn" class="btn btn-secondary">Scan Pages</button>
+                        </div>
+                    </div>
+
+                    <div id="pages-list-container" style="display: none; margin-top: 1rem;">
+                        <label>Select pages for page-specific dialogue:</label>
+                        <div id="pages-list" style="border: 1px solid var(--border-color); padding: 10px; border-radius: 8px; max-height: 150px; overflow-y: auto;">
+                            <!-- Page list will be populated here -->
+                        </div>
+                    </div>
+                 </div>
+
+
+                <div class="card">
+                    <div class="card-header">
+                        <h2>Welcome Messages</h2>
+                        <p>Greet a new visitor with 1-5 messages. They will see these in order before random dialogue begins.</p>
+                    </div>
+                    <div class="dialogue-controls">
+                         <button id="add-welcome-message-btn" type="button" class="btn btn-secondary">＋ Add Welcome Message</button>
+                    </div>
+                    <div id="welcome-messages-list-container" class="dialogue-list">
+                        <!-- Welcome message items will be inserted here -->
+                    </div>
+                </div>
+
+                <div class="card">
+                     <div class="card-header">
+                        <h2>Automations</h2>
+                        <p>Make your buddy react to user actions like hovering over an element or spending time on the page.</p>
+                    </div>
+                    <div class="dialogue-controls">
+                         <button id="add-time-automation-btn" type="button" class="btn btn-secondary">＋ Time on Page Trigger</button>
+                         <button id="add-hover-automation-btn" type="button" class="btn btn-secondary">＋ Element Hover Trigger</button>
+                         <button id="add-inactivity-automation-btn" type="button" class="btn btn-secondary">＋ Inactivity Trigger</button>
+                    </div>
+                    <div id="automations-list-container">
+                        <!-- Automation items will be inserted here -->
+                    </div>
+                </div>
+
+                <div class="card">
+                     <div class="card-header">
+                        <h2>Random Dialogue</h2>
+                        <p>The general messages your buddy will say at random. Use tabs for page-specific dialogue.</p>
+                    </div>
+                    <div class="dialogue-controls">
+                         <button id="generate-dialogue-btn" type="button" class="btn btn-secondary">✨ Generate Dialogue Ideas</button>
+                         <button id="add-dialogue-line-btn" type="button" class="btn btn-secondary">＋ Add Manual Line</button>
+                    </div>
+                    <div id="dialogue-tabs" class="dialogue-tabs">
+                        <!-- Nav tabs will be inserted here -->
+                    </div>
+                    <div id="dialogue-list-container" class="dialogue-list">
+                        <!-- Dialogue items will be inserted here -->
+                    </div>
+                </div>
+                <div class="step-navigation">
+                    <button type="button" class="btn btn-secondary prev-step-btn" data-step="2">← Previous: Behavior</button>
+                    <button id="save-and-get-code-btn" type="button" class="btn btn-primary">Save & Get Code →</button>
+                </div>
+            </div>
+
+            <div id="step-4" class="creator-step">
+                <div class="card code-section" id="code-section">
+                     <div class="card-header">
+                        <h2>Step 4: Get The Code</h2>
+                        <p>Your Webuddy is saved! Now, copy the code below and paste it just before the closing <code>&lt;/body&gt;</code> tag on your website.</p>
+                    </div>
+                    <pre>
+                        <button class="copy-btn">Copy</button>
+                        <code id="generated-code"></code>
+                    </pre>
+                </div>
+                 <div class="step-navigation">
+                    <button type="button" class="btn btn-secondary prev-step-btn" data-step="3">← Previous: Dialogue</button>
+                    <button id="save-btn" type="submit" class="btn btn-primary">Save Buddy</button>
+                </div>
+            </div>
+            
+            <button id="hidden-submit-btn" type="submit" style="display: none;"></button>
+        </form>
+    </div>
+
+    <div id="template-modal" class="modal-overlay" style="display: none;">
+        <div class="modal-content">
+            <button id="modal-close-btn" class="modal-close-btn">&times;</button>
+            <div class="card-header" style="border-bottom: none; margin-bottom: 0; padding-bottom: 0;">
+                <h2>Character Templates</h2>
+                 <p>Choose a pre-made character to get started quickly.</p>
+            </div>
+            <div id="template-grid" class="template-grid">
+                <!-- Templates will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <script src="spaceman.js"></script>
+    <script type="module">
+        import { protectPage, supabase } from './auth.js';
+        import { saveWebuddy, getWebuddyById, updateWebuddy, uploadImageAndGetUrl } from './app.js';
+
+        const buddyForm = document.getElementById('buddy-form');
+        const saveBtn = document.getElementById('save-btn');
+        const previewBtn = document.getElementById('preview-btn-slot');
+        const codeSection = document.getElementById('code-section');
+        const generatedCodeEl = document.getElementById('generated-code');
+        const titleEl = document.getElementById('creator-title');
+        const uploadSlots = document.querySelectorAll('.upload-slot input[type="file"]');
+        const generateDialogueBtn = document.getElementById('generate-dialogue-btn');
+        const addDialogueLineBtn = document.getElementById('add-dialogue-line-btn');
+        const dialogueListContainer = document.getElementById('dialogue-list-container');
+        const dialogueTabsContainer = document.getElementById('dialogue-tabs');
+        const scanPagesBtn = document.getElementById('scan-pages-btn');
+        const pagesListContainer = document.getElementById('pages-list-container');
+        const pagesList = document.getElementById('pages-list');
+        const addWelcomeMessageBtn = document.getElementById('add-welcome-message-btn');
+        const welcomeMessagesListContainer = document.getElementById('welcome-messages-list-container');
+        const addAutomationBtn = document.getElementById('add-automation-btn');
+        const automationsListContainer = document.getElementById('automations-list-container');
+        const showTemplatesBtn = document.getElementById('show-templates-btn');
+        const templateModal = document.getElementById('template-modal');
+        const modalCloseBtn = document.getElementById('modal-close-btn');
+        const templateGrid = document.getElementById('template-grid');
+        
+        let currentUser = null;
+        let currentBuddyId = null;
+        const uploadedImageFiles = {};
+        const uploadedImageBase64 = {};
+        let dialogueData = { 'default': [] };
+        let activeDialogueTab = 'default';
+        let currentStep = 1;
+
+        function getFormValues() {
+            // Save current tab's dialogue before getting all values
+            saveCurrentTabDialogue();
+            const welcomeMessageInputs = welcomeMessagesListContainer.querySelectorAll('.dialogue-item input[type="text"]');
+            const welcome_messages = Array.from(welcomeMessageInputs).map(input => input.value.trim()).filter(Boolean);
+
+            const automations = [];
+            automationsListContainer.querySelectorAll('.automation-item').forEach(item => {
+                const triggerType = item.querySelector('.automation-trigger-type').value;
+                const message = item.querySelector('.automation-message').value;
+                let config = {};
+                if (triggerType === 'time_on_page') {
+                    config.seconds = parseInt(item.querySelector('.automation-config-seconds').value, 10);
+                } else if (triggerType === 'element_hover') {
+                    config.selector = item.querySelector('.automation-config-selector').value;
+                }
+                automations.push({ triggerType, message, config });
+            });
+
+            return {
+                name: document.getElementById('buddy-name').value,
+                website_url: document.getElementById('website-url').value,
+                personality_base: document.getElementById('personality-base').value,
+                custom_instructions: document.getElementById('custom-instructions').value,
+                talk_frequency: parseInt(document.getElementById('talk-frequency').value, 10) || 20,
+                animation_speed: parseInt(document.getElementById('animation-speed').value, 10) || 200,
+                welcome_messages: welcome_messages,
+                automations: automations,
+                approved_dialogue: dialogueData,
+                included_pages: Array.from(pagesList.querySelectorAll('input[type="checkbox"]:checked')).map(cb => cb.value)
+            };
+        }
+
+        function handleFileSelect(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            const direction = e.target.dataset.direction;
+            uploadedImageFiles[direction] = file;
+
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                const base64Url = event.target.result;
+                uploadedImageBase64[direction] = base64Url;
+
+                let previewImg = e.target.parentElement.querySelector('img.preview');
+                if (!previewImg) {
+                    previewImg = document.createElement('img');
+                    previewImg.className = 'preview';
+                    e.target.parentElement.appendChild(previewImg);
+                }
+                previewImg.src = base64Url;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function populateForm(buddyData) {
+            document.getElementById('buddy-name').value = buddyData.name || '';
+            document.getElementById('website-url').value = buddyData.website_url || '';
+            document.getElementById('talk-frequency').value = buddyData.talk_frequency || 20;
+            document.getElementById('animation-speed').value = buddyData.animation_speed || 200;
+            document.getElementById('personality-base').value = buddyData.personality_base || 'friendly';
+            document.getElementById('custom-instructions').value = buddyData.custom_instructions || '';
+            
+            if (buddyData.welcome_messages && buddyData.welcome_messages.length > 0) {
+                buddyData.welcome_messages.forEach(line => addWelcomeMessageLine(line));
+            }
+
+            if (buddyData.automations && buddyData.automations.length > 0) {
+                buddyData.automations.forEach(automation => addAutomation(automation));
+            }
+
+            if (buddyData.included_pages && buddyData.included_pages.length > 0) {
+                pagesList.innerHTML = '';
+                buddyData.included_pages.forEach(pageUrl => {
+                    const pageId = `page-${pageUrl.replace(/[^a-zA-Z0-9]/g, '-')}`;
+                    const pageItem = document.createElement('div');
+                    pageItem.innerHTML = `
+                        <input type="checkbox" id="${pageId}" value="${pageUrl}" checked>
+                        <label for="${pageId}">${pageUrl}</label>
+                    `;
+                    pagesList.appendChild(pageItem);
+                });
+                pagesListContainer.style.display = 'block';
+                updateDialogueTabs();
+            }
+            
+            if (buddyData.approved_dialogue) {
+                if (typeof buddyData.approved_dialogue === 'object' && buddyData.approved_dialogue !== null) {
+                    dialogueData = buddyData.approved_dialogue;
+                } else if (Array.isArray(buddyData.approved_dialogue)) {
+                    // Backwards compatibility
+                    dialogueData = { 'default': buddyData.approved_dialogue };
+                }
+                updateDialogueTabs();
+                renderDialogueForActiveTab();
+            }
+
+            const directions = ['up', 'down', 'left', 'right', 'up-2', 'down-2', 'left-2', 'right-2'];
+            directions.forEach(dir => {
+                const url = buddyData[`image_${dir.replace('-','_')}_url`];
+                if (url) {
+                    const slot = document.querySelector(`input[data-direction="${dir}"]`).parentElement;
+                    let previewImg = slot.querySelector('img.preview');
+                    if (!previewImg) {
+                        previewImg = document.createElement('img');
+                        previewImg.className = 'preview';
+                        slot.appendChild(previewImg);
+                    }
+                    previewImg.src = url;
+                }
+            });
+        }
+
+        function runPreview() {
+            const formValues = getFormValues();
+
+            const configForPreview = {
+                character: {},
+                welcome_messages: formValues.welcome_messages,
+                dialogue: formValues.approved_dialogue,
+                automations: formValues.automations,
+                frequency: formValues.talk_frequency,
+                animationSpeed: formValues.animation_speed
+            };
+
+            const all_directions = ['up', 'down', 'left', 'right', 'up-2', 'down-2', 'left-2', 'right-2'];
+            
+            all_directions.forEach(dir => {
+                if (uploadedImageBase64[dir]) {
+                    configForPreview.character[dir] = uploadedImageBase64[dir];
+                    return; 
+                }
+
+                const slot = document.querySelector(`.upload-slot input[data-direction="${dir}"]`)?.parentElement;
+                if (slot) {
+                    const img = slot.querySelector('img.preview');
+                    if (img && img.src) {
+                        configForPreview.character[dir] = img.src;
+                    }
+                }
+            });
+            
+            if (window.initWebuddy) {
+                window.initWebuddy(configForPreview);
+            } else {
+                alert("The spaceman script isn't loaded correctly.");
+            }
+        }
+
+        function generateEmbedCode(buddy) {
+            const configForExport = {
+                character: {},
+                welcome_messages: buddy.welcome_messages || [],
+                dialogue: buddy.approved_dialogue || {},
+                automations: buddy.automations || [],
+                frequency: buddy.talk_frequency,
+                animationSpeed: buddy.animation_speed || 200
+            };
+            const directions = ['up', 'down', 'left', 'right', 'up-2', 'down-2', 'left-2', 'right-2'];
+            directions.forEach(dir => {
+                if (buddy[`image_${dir.replace('-','_')}_url`]) {
+                    configForExport.character[dir] = buddy[`image_${dir.replace('-','_')}_url`];
+                }
+            });
+            const codeString = `<script>
+  window.spacemanConfig = ${JSON.stringify(configForExport, null, 2)};
+<\/script>
+<script src="https://your-cdn-path-here.com/spaceman.js" defer><\/script>`;
+            generatedCodeEl.textContent = codeString;
+            codeSection.style.display = 'block';
+        }
+
+        function addDialogueLine(text = '') {
+            const item = document.createElement('div');
+            item.className = 'dialogue-item';
+            
+            const handle = document.createElement('span');
+            handle.className = 'drag-handle';
+            handle.innerHTML = '&#x2630;'; // drag icon
+
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.value = text;
+            input.placeholder = 'Enter dialogue here...';
+
+            const deleteBtn = document.createElement('button');
+            deleteBtn.type = 'button';
+            deleteBtn.className = 'btn btn-danger-outline';
+            deleteBtn.textContent = '×';
+            deleteBtn.onclick = () => item.remove();
+            
+            item.appendChild(handle);
+            item.appendChild(input);
+            item.appendChild(deleteBtn);
+            dialogueListContainer.appendChild(item);
+        }
+        
+        function renumberWelcomeMessages() {
+            const items = welcomeMessagesListContainer.querySelectorAll('.dialogue-item');
+            items.forEach((item, index) => {
+                const numberEl = item.querySelector('.item-number');
+                if (numberEl) {
+                    numberEl.textContent = `${index + 1}.`;
+                }
+            });
+            const itemCount = items.length;
+            addWelcomeMessageBtn.disabled = itemCount >= 5;
+        }
+
+        function addWelcomeMessageLine(text = '') {
+            const itemCount = welcomeMessagesListContainer.querySelectorAll('.dialogue-item').length;
+            if (itemCount >= 5) {
+                addWelcomeMessageBtn.disabled = true;
+                return;
+            }
+
+            const item = document.createElement('div');
+            item.className = 'dialogue-item';
+            
+            const handle = document.createElement('span');
+            handle.className = 'drag-handle';
+            handle.innerHTML = '&#x2630;';
+
+            const numberSpan = document.createElement('span');
+            numberSpan.className = 'item-number';
+
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.value = text;
+            input.placeholder = 'Enter welcome message...';
+
+            const deleteBtn = document.createElement('button');
+            deleteBtn.type = 'button';
+            deleteBtn.className = 'btn btn-danger-outline';
+            deleteBtn.textContent = '×';
+            deleteBtn.onclick = () => {
+                item.remove();
+                renumberWelcomeMessages();
+            };
+
+            item.appendChild(handle);
+            item.appendChild(numberSpan);
+            item.appendChild(input);
+            item.appendChild(deleteBtn);
+            welcomeMessagesListContainer.appendChild(item);
+            renumberWelcomeMessages();
+        }
+
+        function addAutomation(triggerType, existingAutomation = null) {
+            const item = document.createElement('div');
+            item.className = 'automation-item';
+
+            const automationData = existingAutomation || { triggerType, message: '', config: {} };
+
+            renderAutomationItem(item, automationData);
+
+            automationsListContainer.appendChild(item);
+        }
+
+        function renderAutomationItem(item, automationData) {
+            const { triggerType, message, config } = automationData;
+
+            let configHtml = '';
+            let triggerLabel = '';
+
+            switch(triggerType) {
+                case 'time_on_page':
+                    triggerLabel = 'Time on Page';
+                    configHtml = `<div class="form-group">
+                                    <label>Seconds on page</label>
+                                    <input type="number" class="automation-config-seconds" value="${config.seconds || 30}" min="1">
+                                </div>`;
+                    break;
+                case 'element_hover':
+                    triggerLabel = 'Element Hover';
+                    configHtml = `<div class="form-group">
+                                    <label>CSS Selector <span class="helper-link" onclick="showSelectorHelper()">How do I find this?</span></label>
+                                    <input type="text" class="automation-config-selector" placeholder="#buy-button, .contact-link" value="${config.selector || ''}">
+                                </div>`;
+                    break;
+                case 'inactivity':
+                    triggerLabel = 'User Inactivity';
+                     configHtml = `<div class="form-group">
+                                    <label>Seconds of user inactivity</label>
+                                    <input type="number" class="automation-config-seconds" value="${config.seconds || 60}" min="5">
+                                </div>`;
+                    break;
+            }
+
+            item.innerHTML = `
+                <div class="form-group automation-item-trigger">
+                    <label>Trigger Type</label>
+                    <p style="font-size: 1.1rem; font-weight: 500; margin: 0.5rem 0;">${triggerLabel}</p>
+                </div>
+                <div class="form-group automation-item-message">
+                    <label>Message to show</label>
+                    <input type="text" class="automation-message" placeholder="e.g., Use code PROMO10 for 10% off!" value="${message || ''}">
+                </div>
+                <div class="automation-item-config">
+                    ${configHtml}
+                </div>
+                <div class="automation-item-delete">
+                    <button type="button" class="btn delete-automation-btn">Delete</button>
+                </div>
+            `;
+            
+            item.querySelector('.delete-automation-btn').addEventListener('click', () => item.remove());
+        }
+
+        function showSelectorHelper() {
+            const helpText = `How to find the CSS Selector:\n\n1. Open your website in a new browser tab.\n2. Right-click on the element you want your buddy to react to (e.g., a button, a link, or an image).\n3. From the menu that appears, click "Inspect". A new panel will open showing the website's code.\n\n4. The line of code for your element will be highlighted. Right-click on that highlighted line.\n5. In the new menu, navigate to "Copy" > "Copy selector".\n\n6. Return to this page and paste the value into the "CSS Selector" box.`;
+            alert(helpText);
+        }
+
+        function saveCurrentTabDialogue() {
+            const currentInputs = dialogueListContainer.querySelectorAll('.dialogue-item input[type="text"]');
+            dialogueData[activeDialogueTab] = Array.from(currentInputs).map(input => input.value.trim()).filter(Boolean);
+        }
+
+        function renderDialogueForActiveTab() {
+            dialogueListContainer.innerHTML = '';
+            const lines = dialogueData[activeDialogueTab] || [];
+            lines.forEach(line => addDialogueLine(line));
+
+            document.querySelectorAll('.dialogue-tab').forEach(tab => {
+                tab.classList.toggle('active', tab.dataset.page === activeDialogueTab);
+            });
+        }
+        
+        function switchTab(pageUrl) {
+            saveCurrentTabDialogue();
+            activeDialogueTab = pageUrl;
+            renderDialogueForActiveTab();
+        }
+
+        function updateDialogueTabs() {
+            const selectedPages = Array.from(pagesList.querySelectorAll('input[type="checkbox"]:checked')).map(cb => cb.value);
+            const pagesForTabs = ['default', ...selectedPages];
+            
+            Object.keys(dialogueData).forEach(pageUrl => {
+                if (!pagesForTabs.includes(pageUrl)) {
+                    delete dialogueData[pageUrl];
+                }
+            });
+
+            dialogueTabsContainer.innerHTML = '';
+            pagesForTabs.forEach(pageUrl => {
+                if (!dialogueData[pageUrl]) {
+                    dialogueData[pageUrl] = [];
+                }
+                const tab = document.createElement('button');
+                tab.type = "button";
+                tab.className = 'dialogue-tab';
+                tab.dataset.page = pageUrl;
+                const tabName = pageUrl === 'default' ? 'Default' : new URL(pageUrl).pathname;
+                tab.textContent = tabName;
+                tab.onclick = () => switchTab(pageUrl);
+                dialogueTabsContainer.appendChild(tab);
+            });
+            
+            if (!pagesForTabs.includes(activeDialogueTab)) {
+                activeDialogueTab = 'default';
+            }
+
+            renderDialogueForActiveTab();
+        }
+
+        async function handleScanPages() {
+            const websiteUrl = document.getElementById('website-url').value;
+            if (!websiteUrl) {
+                alert('Please enter a website URL first.');
+                return;
+            }
+
+            scanPagesBtn.disabled = true;
+            scanPagesBtn.textContent = 'Scanning...';
+            pagesList.innerHTML = '<em>Scanning for pages...</em>';
+            pagesListContainer.style.display = 'block';
+
+            try {
+                const { data, error } = await supabase.functions.invoke('get-website-pages', {
+                    body: { websiteUrl: websiteUrl }
+                });
+
+                if (error) throw error;
+
+                pagesList.innerHTML = '';
+                if (data.pages && data.pages.length > 0) {
+                    data.pages.forEach(pageUrl => {
+                        const pageId = `page-${pageUrl.replace(/[^a-zA-Z0-9]/g, '-')}`;
+                        const pageItem = document.createElement('div');
+                        pageItem.innerHTML = `
+                            <input type="checkbox" id="${pageId}" value="${pageUrl}" checked>
+                            <label for="${pageId}">${pageUrl}</label>
+                        `;
+                        pagesList.appendChild(pageItem);
+                        pageItem.querySelector('input').addEventListener('change', updateDialogueTabs);
+                    });
+                } else {
+                    pagesList.innerHTML = '<em>Could not find any pages. You can still add the main URL.</em>';
+                    const pageId = `page-main`;
+                    const pageItem = document.createElement('div');
+                     pageItem.innerHTML = `
+                        <input type="checkbox" id="${pageId}" value="${websiteUrl}" checked>
+                        <label for="${pageId}">${websiteUrl}</label>
+                    `;
+                    pagesList.appendChild(pageItem);
+                    pageItem.querySelector('input').addEventListener('change', updateDialogueTabs);
+                }
+                updateDialogueTabs();
+            } catch(e) {
+                console.error("Error scanning pages:", e);
+                pagesList.innerHTML = `<em>Error scanning pages: ${e.message}</em>`;
+            } finally {
+                scanPagesBtn.disabled = false;
+                scanPagesBtn.textContent = 'Scan Pages';
+            }
+        }
+
+        async function handleGenerateDialogue() {
+            generateDialogueBtn.disabled = true;
+            generateDialogueBtn.textContent = '🧠 Generating...';
+
+            saveCurrentTabDialogue();
+            const pagesToGenerate = activeDialogueTab === 'default' 
+                ? Array.from(pagesList.querySelectorAll('input[type="checkbox"]:checked')).map(cb => cb.value)
+                : [activeDialogueTab];
+
+            if (pagesToGenerate.length === 0 && activeDialogueTab !== 'default') {
+                pagesToGenerate.push(document.getElementById('website-url').value);
+            }
+            
+            const personalityBase = document.getElementById('personality-base').value;
+            const customInstructions = document.getElementById('custom-instructions').value;
+
+            try {
+                const generationPromises = pagesToGenerate.map(pageUrl => {
+                    return supabase.functions.invoke('get-ai-message', {
+                    body: {
+                            website_url: pageUrl,
+                            personality_base: personalityBase,
+                            custom_instructions: customInstructions
+                        }
+                    });
+                });
+
+                const results = await Promise.all(generationPromises);
+
+                results.forEach((result, index) => {
+                    const pageUrl = pagesToGenerate[index];
+                    if (result.error) {
+                        console.error(`Error for ${pageUrl}:`, result.error);
+                    } else if (result.data.dialogue && result.data.dialogue.length > 0) {
+                        dialogueData[pageUrl] = [...(dialogueData[pageUrl] || []), ...result.data.dialogue];
+                    }
+                });
+
+                renderDialogueForActiveTab();
+
+            } catch (e) {
+                console.error("Error generating dialogue:", e);
+                alert(`An error occurred: ${e.message}`);
+            } finally {
+                generateDialogueBtn.disabled = false;
+                generateDialogueBtn.textContent = '✨ Generate Dialogue Ideas';
+            }
+        }
+
+        async function handleSave(e) {
+            e.preventDefault();
+            if (!currentUser) { alert("You must be logged in to save."); return; }
+            
+            const buddyData = getFormValues();
+            if (!buddyData.name) { alert("Please give your buddy a name!"); return; }
+            
+            saveBtn.disabled = true;
+            document.getElementById('save-and-get-code-btn').disabled = true;
+            saveBtn.textContent = 'Saving...';
+            document.getElementById('save-and-get-code-btn').textContent = 'Saving...';
+
+            let buddyId = currentBuddyId;
+            let existingImageUrls = {};
+
+            if (currentBuddyId) {
+                const existingData = await getWebuddyById(currentBuddyId);
+                if(existingData) {
+                    ['up', 'down', 'left', 'right', 'up_2', 'down_2', 'left_2', 'right_2'].forEach(dir => {
+                        if(existingData[`image_${dir}_url`]) {
+                            existingImageUrls[`image_${dir}_url`] = existingData[`image_${dir}_url`];
+                        }
+                    });
+                }
+            }
+            
+            const imageUrlsToUpdate = {};
+            const uploadPromises = Object.entries(uploadedImageFiles).map(async ([direction, file]) => {
+                const { publicURL, error } = await uploadImageAndGetUrl(file, currentUser.id, buddyId || 'new', direction);
+                if (!error) {
+                    imageUrlsToUpdate[`image_${direction.replace('-','_')}_url`] = publicURL;
+                }
+            });
+            await Promise.all(uploadPromises);
+
+            const finalImageData = { ...existingImageUrls, ...imageUrlsToUpdate };
+            const finalBuddyData = { ...buddyData, ...finalImageData, user_id: currentUser.id };
+
+            if (currentBuddyId) {
+                const {data: updatedData, error} = await updateWebuddy(currentBuddyId, finalBuddyData);
+                 if (error) { alert('Failed to update buddy.');}
+                 else {
+                    alert(`Buddy "${updatedData[0].name}" saved successfully!`);
+                    generateEmbedCode(updatedData[0]);
+                 }
+            } else {
+                const {data: newData, error} = await saveWebuddy(finalBuddyData);
+                if (error) { alert('Failed to create new buddy.'); }
+                else {
+                    currentBuddyId = newData[0].id;
+                    titleEl.textContent = 'Edit Your Webuddy';
+                    window.history.replaceState({}, '', `/creator.html?id=${currentBuddyId}`);
+                    alert(`Buddy "${newData[0].name}" created successfully!`);
+                    generateEmbedCode(newData[0]);
+                }
+            }
+
+            Object.keys(uploadedImageFiles).forEach(key => delete uploadedImageFiles[key]);
+            saveBtn.disabled = false;
+            document.getElementById('save-and-get-code-btn').disabled = false;
+            saveBtn.textContent = 'Save Buddy';
+            document.getElementById('save-and-get-code-btn').textContent = 'Save & Get Code →';
+        }
+
+        function goToStep(stepNumber) {
+            document.querySelectorAll('.creator-step').forEach(step => step.classList.remove('active'));
+            document.getElementById(`step-${stepNumber}`).classList.add('active');
+
+            document.querySelectorAll('.stepper .step').forEach(step => {
+                const stepNum = parseInt(step.dataset.step, 10);
+                step.classList.remove('active', 'completed');
+                if (stepNum < stepNumber) {
+                    step.classList.add('completed');
+                } else if (stepNum === stepNumber) {
+                    step.classList.add('active');
+                }
+            });
+            currentStep = stepNumber;
+        }
+
+        async function initializePage() {
+            currentUser = await protectPage();
+            if (!currentUser) return;
+
+            const urlParams = new URLSearchParams(window.location.search);
+            currentBuddyId = urlParams.get('id');
+
+            if (currentBuddyId) {
+                titleEl.textContent = 'Edit Your Webuddy';
+                const buddyData = await getWebuddyById(currentBuddyId);
+                if (buddyData) {
+                    populateForm(buddyData);
+                    generateEmbedCode(buddyData);
+                } else {
+                    window.location.href = '/dashboard.html';
+                }
+            } else {
+                titleEl.textContent = 'Create New Webuddy';
+                goToStep(1);
+            }
+            
+            loadCharacterTemplates();
+
+            new Sortable(welcomeMessagesListContainer, {
+                handle: '.drag-handle',
+                animation: 150,
+                onEnd: () => renumberWelcomeMessages()
+            });
+
+            new Sortable(dialogueListContainer, {
+                handle: '.drag-handle',
+                animation: 150
+            });
+
+            showTemplatesBtn.addEventListener('click', showTemplateModal);
+            modalCloseBtn.addEventListener('click', hideTemplateModal);
+            templateModal.addEventListener('click', (e) => {
+                if (e.target === templateModal) {
+                    hideTemplateModal();
+                }
+            });
+
+            document.querySelectorAll('.next-step-btn').forEach(btn => {
+                btn.addEventListener('click', () => goToStep(parseInt(btn.dataset.step, 10)));
+            });
+            document.querySelectorAll('.prev-step-btn').forEach(btn => {
+                btn.addEventListener('click', () => goToStep(parseInt(btn.dataset.step, 10)));
+            });
+            document.querySelectorAll('.stepper .step').forEach(step => {
+                step.addEventListener('click', () => goToStep(parseInt(step.dataset.step, 10)));
+            });
+
+            document.getElementById('save-and-get-code-btn').addEventListener('click', async (e) => {
+                await handleSave(e);
+                goToStep(4);
+            });
+
+            buddyForm.addEventListener('submit', handleSave);
+            previewBtn.addEventListener('click', runPreview);
+            uploadSlots.forEach(input => input.addEventListener('change', handleFileSelect));
+            generateDialogueBtn.addEventListener('click', handleGenerateDialogue);
+            addDialogueLineBtn.addEventListener('click', () => addDialogueLine());
+            addWelcomeMessageBtn.addEventListener('click', () => addWelcomeMessageLine());
+            
+            document.getElementById('add-time-automation-btn').addEventListener('click', () => addAutomation('time_on_page'));
+            document.getElementById('add-hover-automation-btn').addEventListener('click', () => addAutomation('element_hover'));
+            document.getElementById('add-inactivity-automation-btn').addEventListener('click', () => addAutomation('inactivity'));
+
+            scanPagesBtn.addEventListener('click', handleScanPages);
+            
+            codeSection.querySelector('.copy-btn').addEventListener('click', () => {
+                navigator.clipboard.writeText(generatedCodeEl.textContent);
+            });
+        }
+
+        function showTemplateModal() {
+            templateModal.style.display = 'flex';
+            loadCharacterTemplates();
+        }
+
+        function hideTemplateModal() {
+            templateModal.style.display = 'none';
+        }
+
+        async function loadCharacterTemplates() {
+            templateGrid.innerHTML = '<div class="template-placeholder" style="grid-column: 1 / -1;">Loading templates...</div>';
+            try {
+                const { data, error } = await supabase
+                    .storage
+                    .from('character-templates')
+                    .list('', {
+                        limit: 100,
+                        offset: 0,
+                    });
+
+                if (error) throw error;
+
+                const characterFolders = data.filter(item => item.id === null && item.name !== '.emptyFolderPlaceholder');
+
+                if (!characterFolders || characterFolders.length === 0) {
+                    templateGrid.innerHTML = '<div class="template-placeholder" style="grid-column: 1 / -1;">No templates found. Make sure you have uploaded character folders to the `character-templates` bucket.</div>';
+                    return;
+                }
+                
+                templateGrid.innerHTML = ''; 
+                
+                characterFolders.forEach(folder => {
+                    const { data: { publicUrl } } = supabase.storage.from('character-templates').getPublicUrl(`${folder.name}/down.png`);
+                    
+                    if (publicUrl) {
+                        const templateDiv = document.createElement('div');
+                        templateDiv.className = 'template-item';
+                        templateDiv.style.backgroundImage = `url(${publicUrl})`;
+                        templateDiv.title = `Use ${folder.name} template`;
+                        templateDiv.onclick = () => applyTemplate(folder.name);
+                        templateGrid.appendChild(templateDiv);
+                    }
+                });
+
+            } catch (e) {
+                console.error('Error loading character templates:', e);
+                templateGrid.innerHTML = `<div class="template-placeholder" style="grid-column: 1 / -1;">Could not load templates. Error: ${e.message}</div>`;
+            }
+        }
+
+        function applyTemplate(templateName) {
+            const directions = ['up', 'down', 'left', 'right'];
+            directions.forEach(dir => {
+                const { data: { publicUrl } } = supabase.storage.from('character-templates').getPublicUrl(`${templateName}/${dir}.png`);
+                const slot = document.querySelector(`.upload-slot input[data-direction="${dir}"]`).parentElement;
+
+                uploadedImageBase64[dir] = publicUrl; 
+                if (uploadedImageFiles[dir]) delete uploadedImageFiles[dir];
+
+                let previewImg = slot.querySelector('img.preview');
+                if (!previewImg) {
+                    previewImg = document.createElement('img');
+                    previewImg.className = 'preview';
+                    slot.appendChild(previewImg);
+                }
+                previewImg.src = publicUrl;
+
+                const animDir = `${dir}-2`;
+                const { data: { publicUrl: animPublicUrl } } = supabase.storage.from('character-templates').getPublicUrl(`${templateName}/${animDir}.png`);
+                const animSlot = document.querySelector(`.upload-slot input[data-direction="${animDir}"]`)?.parentElement;
+                if (animPublicUrl && animSlot) {
+                     uploadedImageBase64[animDir] = animPublicUrl; 
+                    if (uploadedImageFiles[animDir]) delete uploadedImageFiles[animDir];
+
+                    let animPreviewImg = animSlot.querySelector('img.preview');
+                    if (!animPreviewImg) {
+                        animPreviewImg = document.createElement('img');
+                        animPreviewImg.className = 'preview';
+                        animSlot.appendChild(animPreviewImg);
+                    }
+                    animPreviewImg.src = animPublicUrl;
+                }
+            });
+            hideTemplateModal();
+        }
+
+        document.addEventListener('DOMContentLoaded', initializePage);
+    </script>
+</body>
+</html> 

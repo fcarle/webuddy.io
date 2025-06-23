@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Dashboard - Webuddy</title>
+    <link rel="icon" type="image/x-icon" href="data:image/x-icon;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABmJLR0QAAAAAAAD5Q7t/AAAAVUlEQVQ4y2NgoBlo+f+fdoaT7AJsroGKMVFqz2AxgIIQZ0EPFJyAVtHKiGF6DSMjVtuwidcwMuJ3Hro4FnVMKJLE+BOvOkI2YtHIgtcLhCyBhwEFAACctTk4ccr+QgAAAABJRU5ErkJggg==">
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            background-color: #f8f9fa;
+            color: #212529;
+        }
+        .dashboard-container {
+            max-width: 1140px;
+            margin: auto;
+            padding: 2rem;
+        }
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            border-bottom: 2px solid #dee2e6;
+            padding-bottom: 1rem;
+        }
+        header h1 {
+            color: #007bff;
+        }
+        .header-actions button {
+            background-color: #007bff;
+            color: white;
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            margin-left: 1rem;
+        }
+        .header-actions button#logout-btn {
+            background-color: #dc3545;
+        }
+        .buddies-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+        .buddy-card, .create-card {
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+            padding: 1.5rem;
+            transition: transform 0.2s, box-shadow 0.2s;
+            display: flex;
+            flex-direction: column;
+        }
+        .buddy-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px broadcasters-12px rgba(0,0,0,0.1);
+        }
+        .buddy-card h3 {
+            margin: 0 0 1rem 0;
+            color: #343a40;
+        }
+        .buddy-card-preview {
+            height: 100px;
+            background-color: #e9ecef;
+            border-radius: 4px;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+        }
+        .buddy-card-preview img {
+            width: 40px;
+            height: 40px;
+        }
+        .buddy-card-actions {
+            margin-top: auto;
+            display: flex;
+            gap: 0.5rem;
+        }
+        .buddy-card-actions button {
+            flex-grow: 1;
+            padding: 0.5rem;
+            font-size: 0.9rem;
+        }
+        .btn-edit { background-color: #28a745; }
+        .btn-delete { background-color: #dc3545; }
+        .create-card {
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            border: 2px dashed #ced4da;
+            cursor: pointer;
+            color: #6c757d;
+        }
+        .create-card:hover {
+             border-color: #007bff;
+             color: #007bff;
+        }
+        .create-card .plus-icon {
+            font-size: 3rem;
+            line-height: 1;
+            margin-bottom: 0.5rem;
+        }
+        #loading, #no-buddies {
+            grid-column: 1 / -1;
+            text-align: center;
+            color: #6c757d;
+            padding: 2rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <header>
+            <h1>My Webuddies</h1>
+            <div class="header-actions">
+                <span id="user-email"></span>
+                <button id="logout-btn">Log Out</button>
+            </div>
+        </header>
+        
+        <main>
+            <div id="loading">Loading your buddies...</div>
+            <div id="no-buddies" style="display: none;">You haven't created any Webuddies yet. Click the card to get started!</div>
+            <div class="buddies-grid">
+                <!-- Buddy cards will be injected here -->
+                <div class="create-card" onclick="window.location.href='/creator.html'">
+                    <div class="plus-icon">+</div>
+                    <h3>Create New Buddy</h3>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script type="module">
+        import { protectPage, logOut, getCurrentUser } from './auth.js';
+        import { getMyWebuddies, deleteWebuddy } from './app.js';
+
+        const userEmailEl = document.getElementById('user-email');
+        const logoutBtn = document.getElementById('logout-btn');
+        const buddiesGrid = document.querySelector('.buddies-grid');
+        const loadingEl = document.getElementById('loading');
+        const noBuddiesEl = document.getElementById('no-buddies');
+
+        logoutBtn.addEventListener('click', logOut);
+
+        async function populateDashboard() {
+            const user = await protectPage();
+            if (!user) return; // Should have been redirected, but as a safeguard.
+            
+            userEmailEl.textContent = user.email;
+
+            const buddies = await getMyWebuddies();
+            
+            loadingEl.style.display = 'none';
+
+            if (buddies.length === 0) {
+                noBuddiesEl.style.display = 'block';
+            } else {
+                noBuddiesEl.style.display = 'none';
+                buddies.forEach(renderBuddyCard);
+            }
+        }
+
+        function renderBuddyCard(buddy) {
+            const card = document.createElement('div');
+            card.className = 'buddy-card';
+            card.dataset.id = buddy.id;
+
+            card.innerHTML = `
+                <h3>${buddy.name}</h3>
+                <div class="buddy-card-preview">
+                    <img src="${buddy.image_up_url || ''}" title="Up">
+                    <img src="${buddy.image_down_url || ''}" title="Down">
+                    <img src="${buddy.image_left_url || ''}" title="Left">
+                    <img src="${buddy.image_right_url || ''}" title="Right">
+                </div>
+                <div class="buddy-card-actions">
+                    <button class="btn-edit">Edit</button>
+                    <button class="btn-delete">Delete</button>
+                </div>
+            `;
+            
+            buddiesGrid.prepend(card);
+
+            card.querySelector('.btn-edit').addEventListener('click', () => {
+                window.location.href = `/creator.html?id=${buddy.id}`;
+            });
+
+            card.querySelector('.btn-delete').addEventListener('click', async () => {
+                if (confirm(`Are you sure you want to delete "${buddy.name}"?`)) {
+                    await deleteWebuddy(buddy.id);
+                    card.remove();
+                     if (buddiesGrid.querySelectorAll('.buddy-card').length === 0) {
+                        noBuddiesEl.style.display = 'block';
+                    }
+                }
+            });
+        }
+        
+        document.addEventListener('DOMContentLoaded', populateDashboard);
+    </script>
+</body>
+</html> 
